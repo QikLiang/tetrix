@@ -29,9 +29,9 @@ public class Main extends Panel implements KeyEventDispatcher{
 		nextBlock = new Block();
 		
 		//create grid
-		grid = new Color[GRIDW][GRIDH];
-		for (int row=0; row<GRIDW; row++) {
-			for (int col=0; col<GRIDH; col++) {
+		grid = new Color[GRIDH][GRIDW];
+		for (int row=0; row<GRIDH; row++) {
+			for (int col=0; col<GRIDW; col++) {
 				grid[row][col]=EMPTY;
 			}
 		}//put block into grid
@@ -113,14 +113,14 @@ public class Main extends Panel implements KeyEventDispatcher{
 		//draw grid
 		int cellWidth = WIDTH/GRIDW;
 		int cellHeight = HEIGHT/GRIDH;
-		for (int row=0; row<GRIDW; row++) {
-			for (int col=0; col<GRIDH; col++) {
+		for (int row=0; row<GRIDH; row++) {
+			for (int col=0; col<GRIDW; col++) {
 				if (!grid[row][col].equals(EMPTY)) {
 					g.setColor(grid[row][col]);
-					g.fillRect(row*cellWidth, col*cellHeight,
+					g.fillRect(col*cellWidth, row*cellHeight,
 							cellWidth, cellHeight);
 					g.setColor(Color.white);
-					g.drawRect(row*cellWidth, col*cellHeight,
+					g.drawRect(col*cellWidth, row*cellHeight,
 							cellWidth, cellHeight);
 				}
 			}
@@ -133,14 +133,14 @@ public class Main extends Panel implements KeyEventDispatcher{
 		g.drawLine(WIDTH, 0, WIDTH, HEIGHT);
 
 		//next block
-		g.drawRect(WIDTH,30,cellWidth*4,cellHeight*4);
+		g.drawRect(WIDTH+10,30,cellWidth*4,cellHeight*4);
 		for (int i=0; i<4; i++) {
 			g.setColor(nextBlock.color);
-			g.fillRect(WIDTH+nextBlock.position[i][0]*cellWidth,
-					30+nextBlock.position[i][1]*cellHeight, cellWidth, cellHeight);
+			g.fillRect(WIDTH+nextBlock.position[i][1]*cellWidth,
+					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 			g.setColor(Color.white);
-			g.drawRect(WIDTH+nextBlock.position[i][0]*cellWidth,
-					30+nextBlock.position[i][1]*cellHeight, cellWidth, cellHeight);
+			g.drawRect(WIDTH+nextBlock.position[i][1]*cellWidth,
+					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 		}
 		
 		if (gameover) {
@@ -150,12 +150,34 @@ public class Main extends Panel implements KeyEventDispatcher{
 		}
 	}
 
+	//empty row if full
+	public void updateGrid(){
+		boolean full;
+		for (int row=0; row<GRIDH; row++) {//for each row
+			full = true;//check is the row clearable
+			for (int col=0; col<GRIDW; col++) {
+				if (grid[row][col].equals(EMPTY)) {
+					full = false;
+					break;
+				}
+			}
+
+			if(full){ //if row can be cleared
+				for (int i=row; i>0; i--) {
+					//move all rows above down
+					grid[i] = grid [i-1];
+				}
+			}
+		}
+	}
+
 	public void run(){
 		while (!gameover){
 			if (canMove()) {
 				clearBlock();
 				block.y++;
 			} else{
+				updateGrid();//check has a row been filled
 				block = nextBlock;
 				nextBlock = new Block();
 			}
@@ -176,15 +198,15 @@ public class Main extends Panel implements KeyEventDispatcher{
 
 	public boolean canMove(){
 		for (int i=0; i<4; i++) { //for each cell in block
-			if (block.cordinate(i)[1]>=GRIDH-1) { //if cell at bottom
+			if (block.cordinate(i)[0]>=GRIDH-1) { //if cell at bottom
 				return false;
 			}
-			if (!grid[block.cordinate(i)[0]] //if cell below isn't empty
-				[block.cordinate(i)[1]+1].equals(EMPTY)) {
+			if (!grid[block.cordinate(i)[0]+1] //if cell below isn't empty
+				[block.cordinate(i)[1]].equals(EMPTY)) {
 				boolean flag = true;//and cell below isn't apart of block
 				for (int j=0; j<4; j++) {
-					if (block.position[i][0]==block.position[j][0]
-						&& block.position[i][1]<block.position[j][1]) {
+					if (block.position[i][1]==block.position[j][1]
+						&& block.position[i][0]<block.position[j][0]) {
 						flag = false;
 					}
 				}

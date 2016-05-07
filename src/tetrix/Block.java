@@ -27,25 +27,25 @@ public class Block {
 				break;
 			case 1://Z shape
 				position = new int[][] { {0,0},{0,1},{1,1},{1,2} };
-				width = 2;
-				height = 3;
-				break;
-			case 2://L shape
-				position = new int[][] { {0,0},{1,0},{2,0},{2,1} };
 				width = 3;
 				height = 2;
 				break;
+			case 2://L shape
+				position = new int[][] { {0,0},{1,0},{2,0},{2,1} };
+				width = 2;
+				height = 3;
+				break;
 			case 3://I shape
 				position = new int[][] { {0,0},{1,0},{2,0},{3,0} };
-				width = 4;
-				height = 1;
+				width = 1;
+				height = 4;
 				break;
 		}
 
 		//permuate shape via fliping
 		if (Math.random()<.5) {
 			for (int i=0; i<4; i++) {
-				position[i][0] = width-1-position[i][0];
+				position[i][1] = width-1-position[i][1];
 			}
 		}
 
@@ -77,8 +77,8 @@ public class Block {
 
 	public int[] cordinate(int i){
 		int[] cord = new int[2];
-		cord[0]=position[i][0]+x;
-		cord[1]=position[i][1]+y;
+		cord[0]=position[i][0]+y;
+		cord[1]=position[i][1]+x;
 		return cord;
 	}
 }
