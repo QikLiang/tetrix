@@ -1,6 +1,7 @@
 package tetrix;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.KeyEventDispatcher;
@@ -18,6 +19,7 @@ public class Main extends Panel implements KeyEventDispatcher{
 	Block block;
 	Block nextBlock;
 	Color EMPTY = Color.black;
+	boolean gameover = false;
 
 	public Main (){
 		setBackground(Color.black);
@@ -61,8 +63,13 @@ public class Main extends Panel implements KeyEventDispatcher{
 			}
 		}
 
-		//next block
+		//draw grid outline
 		g.setColor(Color.white);
+		g.drawLine(0, 0, 0, HEIGHT);
+		g.drawLine(0, HEIGHT, WIDTH, HEIGHT);
+		g.drawLine(WIDTH, 0, WIDTH, HEIGHT);
+
+		//next block
 		g.drawRect(WIDTH,30,cellWidth*4,cellHeight*4);
 		for (int i=0; i<4; i++) {
 			g.setColor(nextBlock.color);
@@ -72,10 +79,15 @@ public class Main extends Panel implements KeyEventDispatcher{
 			g.drawRect(WIDTH+nextBlock.position[i][0]*cellWidth,
 					30+nextBlock.position[i][1]*cellHeight, cellWidth, cellHeight);
 		}
+		
+		if (gameover) {
+			g.setFont(new Font("Arial", Font.BOLD, 30));
+			g.setColor(Color.white);
+			g.drawString("GAME OVER",WIDTH/2,HEIGHT/2);
+		}
 	}
 
 	public void run(){
-		boolean gameover = false;
 		while (!gameover){
 			if (canMove()) {
 				for (int i=0; i<4; i++) {
@@ -87,6 +99,10 @@ public class Main extends Panel implements KeyEventDispatcher{
 				nextBlock = new Block();
 			}
 			for (int i=0; i<4; i++) {
+				if (!grid[block.cordinate(i)[0]][block.cordinate(i)[1]].
+					equals(EMPTY)) {
+					gameover = true;
+				}
 				grid[block.cordinate(i)[0]][block.cordinate(i)[1]]=block.color;
 			}
 			repaint();
