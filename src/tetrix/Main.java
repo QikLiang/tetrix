@@ -57,21 +57,21 @@ public class Main extends Panel implements KeyEventDispatcher{
 		int event = e.getKeyCode();
 		switch (event){
 			case KeyEvent.VK_A:
-				if (block.x>0) {
+				if (canMoveLeft()) {
 					clearBlock();
 					block.x--;
 					addBlock();
 				}
 				break;
 			case KeyEvent.VK_S:
-				if (canMove()) {
+				if (canMoveDown()) {
 					clearBlock();
 					block.y++;
 					addBlock();
 				}
 				break;
 			case KeyEvent.VK_D:
-				if (block.x+block.getWidth() <GRIDW) {
+				if (canMoveRight()) {
 					clearBlock();
 					block.x++;
 					addBlock();
@@ -173,7 +173,7 @@ public class Main extends Panel implements KeyEventDispatcher{
 
 	public void run(){
 		while (!gameover){
-			if (canMove()) {
+			if (canMoveDown()) {
 				clearBlock();
 				block.y++;
 			} else{
@@ -196,14 +196,14 @@ public class Main extends Panel implements KeyEventDispatcher{
 		}
 	}
 
-	public boolean canMove(){
+	public boolean canMoveDown(){
+		if (block.y+block.getHeight()>=GRIDH) {
+			return false;//if block reach bottom
+		}
 		for (int i=0; i<4; i++) { //for each cell in block
-			if (block.cordinate(i)[0]>=GRIDH-1) { //if cell at bottom
-				return false;
-			}
 			if (!grid[block.cordinate(i)[0]+1] //if cell below isn't empty
 				[block.cordinate(i)[1]].equals(EMPTY)) {
-				boolean flag = true;//and cell below isn't apart of block
+				boolean flag = true;//and cell below isn't a part of block
 				for (int j=0; j<4; j++) {
 					if (block.position[i][1]==block.position[j][1]
 						&& block.position[i][0]<block.position[j][0]) {
@@ -217,7 +217,51 @@ public class Main extends Panel implements KeyEventDispatcher{
 		}
 		return true;
 	}
+
+	public boolean canMoveLeft(){
+		if (block.x<=0) {
+			return false;//if block reach edge
+		}
+		for (int i=0; i<4; i++) { //for each cell in block
+			if (!grid[block.cordinate(i)[0]] //if cell to left isn't empty
+				[block.cordinate(i)[1]-1].equals(EMPTY)) {
+				boolean flag = true;//that cell isn't a part of block
+				for (int j=0; j<4; j++) {
+					if (block.position[i][1]>block.position[j][1]
+						&& block.position[i][0]==block.position[j][0]) {
+						flag = false;
+					}
+				}
+				if (flag) {
+					return false;//return false
+				}
+			}
+		}
+		return true;
+	}
 	
+	public boolean canMoveRight(){
+		if (block.x+block.getWidth()>=GRIDW) {
+			return false;//if block reach edge
+		}
+		for (int i=0; i<4; i++) { //for each cell in block
+			if (!grid[block.cordinate(i)[0]] //if cell to right isn't empty
+				[block.cordinate(i)[1]+1].equals(EMPTY)) {
+				boolean flag = true;//that cell isn't a part of block
+				for (int j=0; j<4; j++) {
+					if (block.position[i][1]<block.position[j][1]
+						&& block.position[i][0]==block.position[j][0]) {
+						flag = false;
+					}
+				}
+				if (flag) {
+					return false;//return false
+				}
+			}
+		}
+		return true;
+	}
+
 	//copy pasted from sample code from a school project
 	public static void main (String[] args) {
         //Init the game board
