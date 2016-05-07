@@ -11,6 +11,10 @@ public class Block {
 	public int x;
 	public int y;
 
+	public int getWidth(){
+		return width;
+	}
+
 	public Block(){
 		x = 4;
 		y = 0;

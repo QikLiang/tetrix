@@ -42,8 +42,71 @@ public class Main extends Panel implements KeyEventDispatcher{
 
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
-		// TODO Auto-generated method stub
-		return false;
+		if (gameover) {//stop if game over
+			return false;
+		}
+
+        //Ignore KEY_RELEASED events (we only care when the key is pressed)
+        String params = e.paramString();
+        if (params.contains("KEY_RELEASED"))
+        {
+            return false;
+        }
+
+		//handle key presses
+		int event = e.getKeyCode();
+		switch (event){
+			case KeyEvent.VK_A:
+				if (block.x>0) {
+					clearBlock();
+					block.x--;
+					addBlock();
+				}
+				break;
+			case KeyEvent.VK_S:
+				if (canMove()) {
+					clearBlock();
+					block.y++;
+					addBlock();
+				}
+				break;
+			case KeyEvent.VK_D:
+				if (block.x+block.getWidth() <GRIDW) {
+					clearBlock();
+					block.x++;
+					addBlock();
+				}
+				break;
+			case KeyEvent.VK_W:
+				//store block
+				break;
+			case KeyEvent.VK_Q:
+				//rotate counter-closewise
+				break;
+			case KeyEvent.VK_E:
+				//rotate closewise
+				break;
+			default:
+				return false;
+		}
+
+		//update graphics
+		repaint();
+
+		return true;
+	}
+
+	//clear block from grid
+	public void clearBlock(){
+		for (int i=0; i<4; i++) {
+			grid[block.cordinate(i)[0]][block.cordinate(i)[1]]=EMPTY;
+		}
+	}
+
+	public void addBlock(){
+		for (int i=0; i<4; i++) {
+			grid[block.cordinate(i)[0]][block.cordinate(i)[1]]=block.color;
+		}
 	}
 	
 	public void paint(Graphics g){
@@ -90,9 +153,7 @@ public class Main extends Panel implements KeyEventDispatcher{
 	public void run(){
 		while (!gameover){
 			if (canMove()) {
-				for (int i=0; i<4; i++) {
-					grid[block.cordinate(i)[0]][block.cordinate(i)[1]]=EMPTY;
-				}
+				clearBlock();
 				block.y++;
 			} else{
 				block = nextBlock;
@@ -103,8 +164,8 @@ public class Main extends Panel implements KeyEventDispatcher{
 					equals(EMPTY)) {
 					gameover = true;
 				}
-				grid[block.cordinate(i)[0]][block.cordinate(i)[1]]=block.color;
 			}
+			addBlock();
 			repaint();
 			try {
 				Thread.sleep(300);
