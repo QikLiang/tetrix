@@ -1,6 +1,7 @@
 package tetrix;
 
 import java.awt.Color;
+import java.util.Arrays;
 
 public class Block {
 
@@ -79,10 +80,53 @@ public class Block {
 		}
 	}
 
+	public Block(Block block){
+		position = new int[4][2];
+		for (int i=0; i<block.position.length; i++) {
+			position[i] = Arrays.copyOf(block.position[i],
+					block.position[i].length);
+		}
+		width=block.width;
+		height=block.height;
+		x=block.x;
+		y=block.y;
+		color=block.color;
+	}
+
 	public int[] cordinate(int i){
 		int[] cord = new int[2];
 		cord[0]=position[i][0]+y;
 		cord[1]=position[i][1]+x;
 		return cord;
+	}
+
+	//rotate clockwise
+	public void rotate(){
+		int temp;
+		for (int i=0; i<4; i++) {
+			temp = position[i][0];
+			position[i][0] = position[i][1];
+			position[i][1] = height -1 -temp;
+		}
+
+		//swap width and height
+		temp = width;
+		width = height;
+		height = temp;
+	}
+
+	//rotate counter-clockwise
+	public void rotateCounter(){
+		int temp;
+		for (int i=0; i<4; i++) {
+			temp = position[i][0];
+			position[i][0] = width -1 -position[i][1];
+			position[i][1] = temp;
+		}
+
+		//swap width and height
+		temp = width;
+		width = height;
+		height = temp;
 	}
 }

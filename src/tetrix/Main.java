@@ -18,7 +18,7 @@ public class Main extends Panel implements KeyEventDispatcher{
 	Color[][] grid;
 	Block block;
 	Block nextBlock;
-	Color EMPTY = Color.black;
+	static final Color EMPTY = Color.black;
 	boolean gameover = false;
 
 	public Main (){
@@ -81,10 +81,20 @@ public class Main extends Panel implements KeyEventDispatcher{
 				//store block
 				break;
 			case KeyEvent.VK_Q:
-				//rotate counter-closewise
+				clearBlock();
+				Block temp = rotatedCounter();
+				if (temp!=null) {
+					block = temp;
+				}
+				addBlock();
 				break;
 			case KeyEvent.VK_E:
-				//rotate closewise
+				clearBlock();
+				temp = rotated();
+				if (temp!=null) {
+					block = temp;
+				}
+				addBlock();
 				break;
 			default:
 				return false;
@@ -260,6 +270,58 @@ public class Main extends Panel implements KeyEventDispatcher{
 			}
 		}
 		return true;
+	}
+
+	//return a rotated block, return null if illegal
+	public Block rotated(){
+		Block rotated = new Block(block);
+		rotated.rotate();
+
+		//push away from edge
+		while(rotated.x+rotated.getWidth()>GRIDW){
+			rotated.x--;
+		}
+		while(rotated.x<0){
+			rotated.x++;
+		}
+		while(rotated.y+rotated.getHeight()>=GRIDH){
+			rotated.y--;
+		}
+
+		for (int i=0; i<4; i++) {
+			int co1=rotated.cordinate(i)[0];
+			int co2=rotated.cordinate(i)[1];
+			if (!grid[rotated.cordinate(i)[0]][rotated.cordinate(i)[1]].
+				equals(EMPTY)) {
+				return null;
+			}
+		}
+		return rotated;
+	}
+
+	//return a rotated block, return null if illegal
+	public Block rotatedCounter(){
+		Block rotated = new Block(block);
+		rotated.rotateCounter();
+
+		//push away from edge
+		while(rotated.x+rotated.getWidth()>GRIDW){
+			rotated.x--;
+		}
+		while(rotated.x<0){
+			rotated.x++;
+		}
+		while(rotated.y+rotated.getHeight()>=GRIDH){
+			rotated.y--;
+		}
+
+		for (int i=0; i<4; i++) {
+			if (!grid[rotated.cordinate(i)[0]][rotated.cordinate(i)[1]].
+				equals(EMPTY)) {
+				return null;
+			}
+		}
+		return rotated;
 	}
 
 	//copy pasted from sample code from a school project
