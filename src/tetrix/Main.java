@@ -142,14 +142,14 @@ public class Main extends Panel implements KeyEventDispatcher{
 		g.drawLine(0, HEIGHT, WIDTH, HEIGHT);
 		g.drawLine(WIDTH, 0, WIDTH, HEIGHT);
 
-		//next block
+		//next block 10 pixel buffer next to grid
 		g.drawRect(WIDTH+10,30,cellWidth*4,cellHeight*4);
 		for (int i=0; i<4; i++) {
 			g.setColor(nextBlock.color);
-			g.fillRect(WIDTH+nextBlock.position[i][1]*cellWidth,
+			g.fillRect(WIDTH+nextBlock.position[i][1]*cellWidth+10,
 					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 			g.setColor(Color.white);
-			g.drawRect(WIDTH+nextBlock.position[i][1]*cellWidth,
+			g.drawRect(WIDTH+nextBlock.position[i][1]*cellWidth+10,
 					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 		}
 		
