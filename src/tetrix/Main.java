@@ -19,10 +19,20 @@ public class Main extends Panel implements KeyEventDispatcher{
 	Block block;
 	Block nextBlock;
 	static final Color EMPTY = Color.black;
+	static final Color[] FLASH = new Color[GRIDW];
 	boolean gameover = false;
+	float duration;
+	boolean debug =false;
 
 	public Main (){
+		duration = 150;//initial speed
+
 		setBackground(Color.black);
+
+		//flash row
+		for (int i=0; i<FLASH.length; i++) {
+			FLASH[i]=Color.white;
+		}
 
 		//create block
 		block = new Block();
@@ -56,6 +66,9 @@ public class Main extends Panel implements KeyEventDispatcher{
 		//handle key presses
 		int event = e.getKeyCode();
 		switch (event){
+			case KeyEvent.VK_R:
+				debug=true;
+				break;
 			case KeyEvent.VK_A:
 				if (canMoveLeft()) {
 					clearBlock();
@@ -162,8 +175,12 @@ public class Main extends Panel implements KeyEventDispatcher{
 
 	//empty row if full
 	public void updateGrid(){
-		boolean full;
-		for (int row=0; row<GRIDH; row++) {//for each row
+		//how many lines each row should move down by
+		int[] lines = new int[GRIDH];
+		lines[GRIDH-1]=0;
+
+		boolean full=true;
+		for (int row=GRIDH-1; row>=0; row--) {//for each row
 			full = true;//check is the row clearable
 			for (int col=0; col<GRIDW; col++) {
 				if (grid[row][col].equals(EMPTY)) {
@@ -172,17 +189,48 @@ public class Main extends Panel implements KeyEventDispatcher{
 				}
 			}
 
-			if(full){ //if row can be cleared
-				for (int i=row; i>0; i--) {
-					//move all rows above down
-					grid[i] = grid [i-1];
+			if (full) {
+				//score++;
+				grid[row]=FLASH;//make a line flash before disappearing
+				if (row!=0) {//if any row besides the top row is full
+					lines[row-1]=lines[row]+1;
 				}
+			} else if (row!=0){ //if row not full
+				lines[row-1]=lines[row];
 			}
 		}
+		repaint();
+		try {
+			Thread.sleep(30);//pause for player to see flash
+		} catch(Exception e) {//ignore exception
+		}
+
+		//cover up the flashing lines by moving lines above down
+		for (int row=GRIDH-2; row>=0; row--) {
+			grid[row+lines[row]] = grid[row];
+		}
+		for (int row=0; row<lines[0]; row++) {
+			grid[row]= new Color[GRIDW];
+			for (int col=0; col<GRIDW; col++) {
+				grid[row][col]=EMPTY;
+			}
+		}
+
+		if (full) {//if top line was full
+			grid[lines[0]+1]= new Color[GRIDW];
+			for (int col=0; col<GRIDW; col++) {
+				grid[lines[0]+1][col]=EMPTY;
+			}
+		}
+
+		repaint();
 	}
 
 	public void run(){
 		while (!gameover){
+			if (debug) {
+				debug=false;
+			}
 			if (canMoveDown()) {
 				clearBlock();
 				block.y++;
