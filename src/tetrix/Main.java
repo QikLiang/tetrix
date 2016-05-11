@@ -2,14 +2,14 @@ package tetrix;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Frame;
+import javax.swing.JFrame;
 import java.awt.Graphics;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Panel;
+import javax.swing.JPanel;
 import java.awt.event.KeyEvent;
 
-public class Main extends Panel implements KeyEventDispatcher{
+public class Main extends JPanel implements KeyEventDispatcher{
 
 	final static int WIDTH = 300;
 	final static int HEIGHT = 500;
@@ -133,6 +133,9 @@ public class Main extends Panel implements KeyEventDispatcher{
 	}
 	
 	public void paint(Graphics g){
+		g.setColor(Color.black);
+		g.fillRect(0, 0, 500, 500);
+
 		//draw grid
 		int cellWidth = WIDTH/GRIDW;
 		int cellHeight = HEIGHT/GRIDH;
@@ -378,7 +381,7 @@ public class Main extends Panel implements KeyEventDispatcher{
         Main game = new Main();
 
         //Create a window for this program
-        final Frame myFrame = new Frame();
+        final JFrame myFrame = new JFrame();
         myFrame.setSize(WIDTH+200, HEIGHT+50);
 
         //Tell this Window to close when someone presses the close button
