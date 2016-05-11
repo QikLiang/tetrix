@@ -18,6 +18,8 @@ public class Main extends JPanel implements KeyEventDispatcher{
 	Color[][] grid;
 	Block block;
 	Block nextBlock;
+	Block storeBlock;
+	boolean blockStored; //whether w has been pressed already for the same block
 	static final Color EMPTY = Color.black;
 	static final Color[] FLASH = new Color[GRIDW];
 	boolean gameover = false;
@@ -28,6 +30,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 	public Main (){
 		duration = 300;//initial speed
 		score = 0;
+		blockStored=false;
 
 		setBackground(Color.black);
 
@@ -93,7 +96,21 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				}
 				break;
 			case KeyEvent.VK_W:
-				//store block
+				if (!blockStored) {
+					clearBlock();
+					Block temp=block;//store current block
+					if (storeBlock==null) {//if a block has not been stored yet
+						block = nextBlock;//use next block
+						nextBlock = new Block();
+					} else {//if a block is already stored
+						storeBlock.x=4;//reset store block's position
+						storeBlock.y=0;
+						block = storeBlock;//use store blcok as next blcok
+					}
+					storeBlock = temp;//put old block into storeBlock
+					addBlock();
+					blockStored=true;
+				}
 				break;
 			case KeyEvent.VK_Q:
 				clearBlock();
@@ -170,10 +187,23 @@ public class Main extends JPanel implements KeyEventDispatcher{
 			g.drawRect(WIDTH+nextBlock.position[i][1]*cellWidth+10,
 					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 		}
+
+		//storeBlock 10 pixel buffer next to grid and underneth storeBlock
+		g.drawRect(WIDTH+10,30+cellHeight*5,cellWidth*4,cellHeight*4);
+		if (storeBlock!=null) {
+			for (int i=0; i<4; i++) {
+				g.setColor(storeBlock.color);
+				g.fillRect(WIDTH+storeBlock.position[i][1]*cellWidth+10,
+						30+(5+storeBlock.position[i][0])*cellHeight, cellWidth, cellHeight);
+				g.setColor(Color.white);
+				g.drawRect(WIDTH+storeBlock.position[i][1]*cellWidth+10,
+						30+(5+storeBlock.position[i][0])*cellHeight, cellWidth, cellHeight);
+			}
+		}
 		
 			g.setFont(new Font("Arial", Font.BOLD, 20));
 			g.setColor(Color.white);
-			g.drawString("Score: "+score, WIDTH+10, cellHeight*10);
+			g.drawString("Score: "+score, WIDTH+10, cellHeight*12);
 
 		if (gameover) {
 			g.setFont(new Font("Arial", Font.BOLD, 30));
@@ -250,6 +280,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				updateGrid();//check has a row been filled
 				block = nextBlock;
 				nextBlock = new Block();
+				blockStored=false;
 			}
 			for (int i=0; i<4; i++) {
 				if (!grid[block.cordinate(i)[0]][block.cordinate(i)[1]].
