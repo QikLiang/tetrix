@@ -24,7 +24,7 @@ public class Block {
 		x = 4;
 		y = 0;
 		//generate shape
-		switch((int)(Math.random()*4)){
+		switch((int)(Math.random()*5)){
 			case 0://O shape
 				position = new int[][] { {0,0},{0,1},{1,0},{1,1} };
 				width = 2;
@@ -45,6 +45,11 @@ public class Block {
 				width = 1;
 				height = 4;
 				break;
+			case 4://T shape
+				position = new int[][] { {0,0},{1,0},{2,0},{1,1} };
+				width = 2;
+				height = 3;
+				break;
 		}
 
 		//permuate shape via fliping
@@ -52,6 +57,19 @@ public class Block {
 			for (int i=0; i<4; i++) {
 				position[i][1] = width-1-position[i][1];
 			}
+		}
+
+		//permuate shape via rotation
+		switch((int)(Math.random()*4)){
+			case 0://do nothing
+				break;
+			case 1://rotate 180
+				rotate();
+			case 2://rotate clockwise
+				rotate();
+				break;
+			case 3://rotate counter-clockwise
+				rotateCounter();
 		}
 
 		//determin color
