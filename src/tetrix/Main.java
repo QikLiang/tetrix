@@ -22,10 +22,12 @@ public class Main extends JPanel implements KeyEventDispatcher{
 	static final Color[] FLASH = new Color[GRIDW];
 	boolean gameover = false;
 	float duration;
+	int score;
 	boolean debug =false;
 
 	public Main (){
-		duration = 150;//initial speed
+		duration = 300;//initial speed
+		score = 0;
 
 		setBackground(Color.black);
 
@@ -169,9 +171,12 @@ public class Main extends JPanel implements KeyEventDispatcher{
 					30+nextBlock.position[i][0]*cellHeight, cellWidth, cellHeight);
 		}
 		
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setColor(Color.white);
+			g.drawString("Score: "+score, WIDTH+10, cellHeight*10);
+
 		if (gameover) {
 			g.setFont(new Font("Arial", Font.BOLD, 30));
-			g.setColor(Color.white);
 			g.drawString("GAME OVER",WIDTH/2,HEIGHT/2);
 		}
 	}
@@ -193,7 +198,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 			}
 
 			if (full) {
-				//score++;
+				score++;//increase score
 				grid[row]=FLASH;//make a line flash before disappearing
 				if (row!=0) {//if any row besides the top row is full
 					lines[row-1]=lines[row]+1;
@@ -226,6 +231,10 @@ public class Main extends JPanel implements KeyEventDispatcher{
 			}
 		}
 
+		if (lines[0]>0 || full) {//if lines are cleared
+			duration*=.95;//increase speed
+		}
+
 		repaint();
 	}
 
@@ -251,7 +260,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 			addBlock();
 			repaint();
 			try {
-				Thread.sleep(300);
+				Thread.sleep((int)duration);
 			} catch(Exception e) {//ignore exception
 			}
 		}
