@@ -25,12 +25,14 @@ public class Main extends JPanel implements KeyEventDispatcher{
 	boolean gameover = false;
 	float duration;
 	int score;
+	boolean instructions;
 	boolean debug =false;
 
 	public Main (){
 		duration = 300;//initial speed
 		score = 0;
 		blockStored=false;
+		instructions=true;
 
 		setBackground(Color.black);
 
@@ -75,6 +77,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				debug=true;
 				break;
 			case KeyEvent.VK_A:
+				instructions=false;
 				if (canMoveLeft()) {
 					clearBlock();
 					block.x--;
@@ -82,6 +85,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				}
 				break;
 			case KeyEvent.VK_S:
+				instructions=false;
 				if (canMoveDown()) {
 					clearBlock();
 					block.y++;
@@ -89,6 +93,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				}
 				break;
 			case KeyEvent.VK_D:
+				instructions=false;
 				if (canMoveRight()) {
 					clearBlock();
 					block.x++;
@@ -113,6 +118,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				}
 				break;
 			case KeyEvent.VK_Q:
+				instructions=false;
 				clearBlock();
 				Block temp = rotatedCounter();
 				if (temp!=null) {
@@ -121,6 +127,7 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				addBlock();
 				break;
 			case KeyEvent.VK_E:
+				instructions=false;
 				clearBlock();
 				temp = rotated();
 				if (temp!=null) {
@@ -154,6 +161,17 @@ public class Main extends JPanel implements KeyEventDispatcher{
 	public void paint(Graphics g){
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 500, 500);
+
+		//draw instructions
+		if (instructions) {
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setColor(Color.gray.brighter());
+			g.drawString("A: LEFT",WIDTH/4, HEIGHT/3);
+			g.drawString("S: DOWN",WIDTH/4, HEIGHT/3+20);
+			g.drawString("D: DOWN",WIDTH/4, HEIGHT/3+40);
+			g.drawString("Q: ROTATE LEFT",WIDTH/4, HEIGHT/3+60);
+			g.drawString("E: ROTATE RIGHT",WIDTH/4, HEIGHT/3+80);
+		}
 
 		//draw grid
 		int cellWidth = WIDTH/GRIDW;
@@ -199,6 +217,13 @@ public class Main extends JPanel implements KeyEventDispatcher{
 				g.drawRect(WIDTH+storeBlock.position[i][1]*cellWidth+10,
 						30+(5+storeBlock.position[i][0])*cellHeight, cellWidth, cellHeight);
 			}
+		} else {
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setColor(Color.gray.brighter());
+			g.drawString("W: STORE",WIDTH+10,50+cellHeight*5);
+			g.drawString("CURRENT",WIDTH+10,70+cellHeight*5);
+			g.drawString("BLOCK",WIDTH+10,90+cellHeight*5);
+
 		}
 		
 			g.setFont(new Font("Arial", Font.BOLD, 20));
